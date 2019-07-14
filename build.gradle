@@ -2,11 +2,18 @@ plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
 }
 
+repositories {
+    maven {
+        url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
+    }
+}
+
 group = pluginGroup
 version = pluginVersion
 
 dependencies {
     compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
+    compile 'io.github.nucleuspowered:nucleus-api:1.12.1-S7.1'
 }
 
 sponge.plugin.id = pluginId
