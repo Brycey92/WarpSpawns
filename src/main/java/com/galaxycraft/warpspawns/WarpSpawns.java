@@ -6,6 +6,7 @@ import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusModuleService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarpService;
 import org.slf4j.Logger;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Plugin(
         id = "warpspawns",
         name = "WarpSpawns",
-        description = "This is a Sponge plugin that uses Nucleus warps to enable multiple spawn points.",
+        description = "Uses Nucleus warps to enable multiple spawn points.",
         url = "http://www.galaxy-craft.com",
         authors = {
                 "Brycey92"
@@ -30,7 +31,6 @@ import java.util.Set;
 )
 public class WarpSpawns {
     private boolean disable = false;
-    private boolean homeModuleLoaded = true;
 
     private static WarpSpawns instance;
 
@@ -40,9 +40,7 @@ public class WarpSpawns {
     @Inject
     private PluginContainer pluginContainer;
 
-    //private NucleusSpawnService spawnService;
     private NucleusWarpService warpService;
-    private NucleusHomeService homeService;
 
     public WarpSpawns() { instance = this; }
 
@@ -52,14 +50,10 @@ public class WarpSpawns {
     //By this state, inter-plugin communication should be ready to occur. Plugins providing an API should be ready to accept basic requests.
     public void onPostInit(GamePostInitializationEvent event) {
 
-        /*Optional spawnServiceOptional = NucleusAPI.getSpawnService();
-        if(spawnServiceOptional.isPresent()) {
-            spawnService = (NucleusSpawnService) spawnServiceOptional.get();
-        }
-        else {
+        if(!NucleusAPI.getModuleService().getModulesToLoad().contains("spawn")) {
             disable = true;
             logger.error("Could not find Nucleus' spawn module.");
-        }*/
+        }
 
         Optional warpServiceOptional = NucleusAPI.getWarpService();
         if(warpServiceOptional.isPresent()) {
@@ -70,31 +64,30 @@ public class WarpSpawns {
             logger.error("Could not find Nucleus' warp module.");
         }
 
-        Optional homeServiceOptional = NucleusAPI.getHomeService();
-        if(homeServiceOptional.isPresent()) {
-            homeService = (NucleusHomeService) homeServiceOptional.get();
-        }
-        else {
-            homeModuleLoaded = false;
-        }
-
         if(disable) {
-            throw new RuntimeException("One or more required Nucleus modules were not found. The plugin will now be disabled.");
+            logger.error("One or more required Nucleus modules were not found. The plugin will now be disabled.");
         }
         else {
+            Sponge.getEventManager().registerListeners(this, new SpawnHandler());
             logger.info("Ready to spawn to some warps!");
         }
     }
 
-    /*public NucleusSpawnService getSpawnService() {
-        return spawnService;
-    }*/
+    public static NucleusWarpService getWarpService() { return instance.warpService; }
 
-    public NucleusWarpService getWarpService() {
-        return warpService;
+    protected static void debug(String msg) {
+        instance.logger.debug(msg);
     }
 
-    public NucleusHomeService getHomeService() {
-        return homeService;
+    protected static void info(String msg) {
+        instance.logger.info(msg);
+    }
+
+    protected static void warn(String msg) {
+        instance.logger.warn(msg);
+    }
+
+    protected static void error(String msg) {
+        instance.logger.error(msg);
     }
 }

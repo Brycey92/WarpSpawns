@@ -13,7 +13,8 @@ version = pluginVersion
 
 dependencies {
     compile 'org.spongepowered:spongeapi:7.1.0-SNAPSHOT'
-    compile 'io.github.nucleuspowered:nucleus-api:1.12.1-S7.1'
+    //compile 'io.github.nucleuspowered:nucleus-api:1.12.3-S7.1'
+	compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 sponge.plugin.id = pluginId
