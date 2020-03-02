@@ -26,7 +26,7 @@ import java.util.Set;
                 "Brycey92"
         },
         dependencies = {
-                @Dependency(id = "nucleus")
+                @Dependency(id = "nucleus", version = "[1.13.0-S7.1,)")
         }
 )
 public class WarpSpawns {

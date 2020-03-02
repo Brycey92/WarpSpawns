@@ -1,7 +1,7 @@
 package com.galaxycraft.warpspawns;
 
 import io.github.nucleuspowered.nucleus.api.EventContexts;
-import io.github.nucleuspowered.nucleus.api.events.NucleusRedirectableSpawnEvent;
+import io.github.nucleuspowered.nucleus.api.events.NucleusSendToSpawnEvent;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Warp;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.world.Location;
@@ -12,11 +12,11 @@ import java.util.UUID;
 public class SpawnHandler {
 
     @Listener
-    public void onSpawnEvent(NucleusRedirectableSpawnEvent event) {
+    public void onSpawnEvent(NucleusSendToSpawnEvent event) {
         World world = event.getTransformTo().getExtent();
 
         //get the type of spawn event from nucleus, so we can differentiate permissions between death, spawn command, etc.
-        String permSuffix = event.getContext().get(EventContexts.SPAWN_EVENT_TYPE).map(NucleusRedirectableSpawnEvent.Type::name).orElse("other").toLowerCase();
+        String permSuffix = event.getContext().get(EventContexts.SPAWN_EVENT_TYPE).map(NucleusSendToSpawnEvent.Type::name).orElse("other").replaceAll("_", "").toLowerCase();
 
         //check each warp in the "spawns" category, in the order they were given, skipping any that are missing data
         for(Warp warp : WarpSpawns.getWarpService().getWarpsForCategory("spawns")) {
