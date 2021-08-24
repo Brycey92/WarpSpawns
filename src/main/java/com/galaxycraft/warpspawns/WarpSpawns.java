@@ -2,20 +2,18 @@ package com.galaxycraft.warpspawns;
 
 import com.google.inject.Inject;
 import io.github.nucleuspowered.nucleus.api.NucleusAPI;
-import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusModuleService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusWarpService;
+import io.github.nucleuspowered.nucleus.api.core.event.NucleusModuleEvent;
+import io.github.nucleuspowered.nucleus.api.module.home.NucleusHomeService;
+import io.github.nucleuspowered.nucleus.api.module.warp.NucleusWarpService;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Plugin(
         id = "warpspawns",
@@ -26,7 +24,7 @@ import java.util.Set;
                 "Brycey92"
         },
         dependencies = {
-                @Dependency(id = "nucleus", version = "[1.13.0-S7.1,)")
+                @Dependency(id = "nucleus", version = "[2.0.0,)")
         }
 )
 public class WarpSpawns {
@@ -47,17 +45,23 @@ public class WarpSpawns {
     public static WarpSpawns getInstance() { return instance; }
 
     @Listener
-    //By this state, inter-plugin communication should be ready to occur. Plugins providing an API should be ready to accept basic requests.
-    public void onPostInit(GamePostInitializationEvent event) {
-
-        if(!NucleusAPI.getModuleService().getModulesToLoad().contains("spawn")) {
+    public void aboutToConstruct(NucleusModuleEvent.AboutToConstruct event) {
+        if(event.getModuleList().get("spawn") == NucleusModuleEvent.ModuleEnableState.DISABLED) {
             disable = true;
             logger.error("Could not find Nucleus' spawn module.");
         }
+        else {
+            logger.debug("Found Nucleus' spawn module.");
+        }
+    }
 
+    @Listener
+    //By this state, inter-plugin communication should be ready to occur. Plugins providing an API should be ready to accept basic requests.
+    public void onPostInit(GamePostInitializationEvent event) {
         Optional warpServiceOptional = NucleusAPI.getWarpService();
         if(warpServiceOptional.isPresent()) {
             warpService = (NucleusWarpService) warpServiceOptional.get();
+            logger.debug("Found Nucleus' warp module.");
         }
         else {
             disable = true;
@@ -73,7 +77,7 @@ public class WarpSpawns {
         }
     }
 
-    public static NucleusWarpService getWarpService() { return instance.warpService; }
+    static NucleusWarpService getWarpService() { return instance.warpService; }
 
     protected static void debug(String msg) {
         instance.logger.debug(msg);

@@ -1,8 +1,8 @@
 package com.galaxycraft.warpspawns;
 
 import io.github.nucleuspowered.nucleus.api.EventContexts;
-import io.github.nucleuspowered.nucleus.api.events.NucleusSendToSpawnEvent;
-import io.github.nucleuspowered.nucleus.api.nucleusdata.Warp;
+import io.github.nucleuspowered.nucleus.api.module.spawn.event.NucleusSendToSpawnEvent;
+import io.github.nucleuspowered.nucleus.api.module.warp.data.Warp;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
